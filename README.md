@@ -1,16 +1,27 @@
 # ta-nelua
 
-Lexer to add [Nelua](https://nelua.io/) support to [Textadept](https://foicica.com/textadept/)
+Lexer to add [Nelua](https://nelua.io/) support to [Textadept](https://foicica.com/textadept/) editor.
 
-For now, only the lexer is available.
+## How to install
 
-## How to use
-
-* Clone the repository;
-* Move the file lexer/nelua.lua to *_USERHOME*/lexers/ directory;
-* Add this line to your *_USERHOME*/init.lua: ``lua textadept.file_types.extensions.nelua = 'nelua'``;
+* Clone or download the repository;
+* Move the lexer/nelua.lua file to *_USERHOME*/lexers/ directory;
+* Move the ta-nelua directory to *_USERHOME*/modules/ directory;
+* Add this line to your *_USERHOME*/init.lua: ``require("ta-nelua")``;
 
 (*_USERHOME* is your textadept userhome directory, by default, ~/.textadept/ or  C:\Users\username\.textadept)
+
+## Usage
+
+When opening any .nelua file, the nelua lexer will be selected automatically.
+
+To run or compile a file, you can:
+* use Ctrl+R to run; Shift+Ctrl+R to compile;
+* go to Tools -> Run to run; Tools -> Compile to compile
+
+If your file is on a VCS (Bazaar, Git, Mercurial, or SVN) directory, the root of the VCS project will be considered the working directory to run/compile.
+
+Consult *Compile, Run, and Build* section of [Textadept's Manual](https://foicica.com/textadept/manual.html) to more information.
 
 ## Preview
 
