@@ -36,7 +36,7 @@ lex:add_rule('keyword', keywords)
 -- Types
 -- from: [Nelua source code/nelua/typedefs.lua](https://github.com/edubart/nelua-lang/blob/e74db9f729d49807cf5a072363f206fa0b26bf43/nelua/typedefs.lua)
 local type_op = S(':@')
-lex:add_rule('type', token(lexer.OPERATOR, type_op) * lexer.space^0 * token(lexer.TYPE, lexer.word) * lexer.space^0 * - (P'(' * P')'))
+lex:add_rule('type', token(lexer.OPERATOR, type_op) * lexer.space^0 * token(lexer.TYPE, lexer.word) * -(lexer.space^0 * P'(' * (lexer.any-P')')^0  * P')') )
 
 -- Functions and deprecated functions
 -- from: https://www.lua.org/manual/5.1/contents.html#index,
