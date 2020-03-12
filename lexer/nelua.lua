@@ -36,7 +36,7 @@ lex:add_rule('keyword', keywords)
 -- Types
 -- from: [Nelua source code/nelua/typedefs.lua](https://github.com/edubart/nelua-lang/blob/e74db9f729d49807cf5a072363f206fa0b26bf43/nelua/typedefs.lua)
 local type_op = S(':@')
-lex:add_rule('type', token(lexer.OPERATOR, type_op) * lexer.space^0 * token(lexer.TYPE, lexer.word))
+lex:add_rule('type', token(lexer.OPERATOR, type_op) * lexer.space^0 * token(lexer.TYPE, lexer.word) * lexer.space^0 * - (P'(' * P')'))
 
 -- Functions and deprecated functions
 -- from: https://www.lua.org/manual/5.1/contents.html#index,
@@ -201,6 +201,7 @@ lex:add_fold_point(lexer.KEYWORD, 'repeat', 'until')
 lex:add_fold_point(lexer.COMMENT, '[', fold_longcomment)
 lex:add_fold_point(lexer.COMMENT, ']', fold_longcomment)
 lex:add_fold_point(lexer.COMMENT, '--', lexer.fold_line_comments('--'))
+
 lex:add_fold_point('longstring', '[', ']')
 lex:add_fold_point(lexer.OPERATOR, '(', ')')
 lex:add_fold_point(lexer.OPERATOR, '[', ']')
