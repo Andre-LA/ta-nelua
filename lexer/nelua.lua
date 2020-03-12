@@ -173,7 +173,7 @@ lex:add_rule('number', token(lexer.NUMBER, (lexer.float + integer) * (nelua_suff
 lex:add_rule('label', token(lexer.LABEL, '::' * lexer.word * '::'))
 
 -- Prerocessor
-lex:add_rule('preprocessor', token('preprocessor_token', (P('##[[') + '##' + ']]' + '#(' + ')#' + "#[" + "]#")^1))
+lex:add_rule('preprocessor', token('preprocessor_token', (P('##[[') + '##' + ']]' + '#|' + '|#' + "#[" + "]#")^1))
 lex:add_style('preprocessor_token', lexer.STYLE_PREPROCESSOR .. ',bold')
 
 -- Annotations
