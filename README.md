@@ -1,5 +1,7 @@
 # ta-nelua
 
+** NOTE: This is now unmaintained, feel free to create a fork and continue it.**
+
 Lexer to add [Nelua](https://nelua.io/) support to [Textadept](https://foicica.com/textadept/) editor.
 
 ## How to install
