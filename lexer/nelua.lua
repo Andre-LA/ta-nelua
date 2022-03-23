@@ -25,20 +25,6 @@ local keywords = token(lexer.KEYWORD, word_match{
   'switch', 'case', 'continue', 'fallthrough', 'global', 'defer',
 })
 
-
--- Types --
-
-local type_op = S(':@')
-
--- built-in and standard simple functions --
-
--- nelua functions listed at libraries page: https://nelua.io/libraries/
-local functions = token(lexer.FUNCTION, word_match{
-  'require', 'print', 'panic', 'error', 'assert', 'check', 'likely', 'unlikely',
-  'arg', 'ipairs', 'mipairs', 'next', 'mnext', 'pairs', 'mpairs', 'select', 'tostring',
-  'tonumber', 'tointeger', 'warn'
-})
-
 -- Constants
 
 -- Nelua libraries, from libraries page: https://nelua.io/libraries/
@@ -119,8 +105,6 @@ local libraries = token('library', word_match{
 })
 
 
--- Identifiers.
-
 -- Strings.
 local longstring = lpeg.Cmt(
   '[' * lpeg.C(P('=')^0) * '[',
@@ -130,7 +114,8 @@ local longstring = lpeg.Cmt(
   end
 )
 
--- Comments.
+local string_patt = lexer.range("'") + lexer.range('"')
+local string_tk = token(lexer.STRING, string_patt + token('longstring', longstring))
 
 -- Numbers.
 local nelua_suffixes = word_match{
@@ -178,28 +163,56 @@ local integer = P('-')^-1 * (lexer.hex_num + lexer.dec_num)
 local preprocessor_line = token('preprocessor_token', P'##')
 local preprocessor_start = token('preprocessor_token', P'#|' + '#[' + (P'##[' * P'='^0 * '['))
 local preprocessor_end  = token('preprocessor_token', P'|#' + "]#" +   (P']' * P'='^0 * ']'))
+local pp_repl_macro_syntax_sugar  = token('preprocessor_token', P'!' * #(P'('))
+
+-- functions
+local balanced_parens = lexer.range('(', ')', false, false, true)
+local balanced_braces = lexer.range('{', '}', false, false, true)
+
+local function_call = (P'!'^-1 * balanced_parens) + string_tk + balanced_braces
+local function_tk = token(lexer.FUNCTION, lexer.word) * #(ws0 * function_call)
 
 -- rules
 
 lex:add_rule('whitespace', token(lexer.WHITESPACE, ws1))
 lex:add_rule('keyword', keywords)
-lex:add_rule('type', token(lexer.OPERATOR, type_op) * ws0 * token(lexer.TYPE, lexer.word) * -(ws0 * P'(' * (lexer.any-P')')^0  * P')') )
-lex:add_rule('function', functions)
+
+lex:add_rule('type',
+  token(lexer.OPERATOR, P'@') * ws0 * token(lexer.TYPE, lexer.word)
+  +
+  token(lexer.OPERATOR, P':') * ws1 * token(lexer.TYPE, lexer.word)
+  +
+  token(lexer.OPERATOR, P':') * token(lexer.TYPE, lexer.word) * #(P' '^0 * (lexer.newline + '='))
+  +
+  token(lexer.OPERATOR, P':') * token(lexer.TYPE, lexer.word) * #(P' '^0 * (function_call * (ws0 * '=')) )
+)
+
+lex:add_rule('function', function_tk)
+
+lex:add_rule('library', libraries)
+
 lex:add_rule('constant', token(lexer.CONSTANT, P'_VERSION'))
+
 lex:add_style('library', lexer.STYLE_TYPE)
+
 lex:add_rule('identifier', token(lexer.IDENTIFIER, lexer.word))
-lex:add_rule('string', token(lexer.STRING, lexer.range("'") + lexer.range('"')) + token('longstring', longstring))
+
+lex:add_rule('string', string_tk)
 lex:add_style('longstring', lexer.STYLE_STRING)
+
 lex:add_rule('comment', token(lexer.COMMENT, '--' * (longstring + lexer.nonnewline^0)))
 lex:add_rule('number', token(lexer.NUMBER, (lexer.float + integer) * (nelua_suffixes)^0))
 lex:add_rule('label', token(lexer.LABEL, '::' * lexer.word * '::'))
-lex:add_rule('preprocessor', preprocessor_line + preprocessor_start + preprocessor_end)
+
+lex:add_rule('preprocessor', preprocessor_line + preprocessor_start + preprocessor_end + pp_repl_macro_syntax_sugar)
 
 lex:add_rule('annotation', token(lexer.PREPROCESSOR, P'<' * -lexer.space * (lexer.nonnewline - P' >' - P'>')^1 * '>'))
+
 lex:add_style('annotation', lexer.styles.class)
-lex:add_rule('operator', token(lexer.OPERATOR, '..' + S('+-*/%^#=<>&|~;,.{}[]()$') + type_op))
-lex:add_rule('library', libraries)
+lex:add_rule('operator', token(lexer.OPERATOR, '..' + S('+-*/%^#=<>&|~;,.:{}[]()$')))
 lex:add_style('preprocessor_token', lexer.STYLE_PREPROCESSOR .. {bold = true})
+
+lex:add_rule('error', token(lexer.ERROR, lexer.any))
 
 -- Fold points.
 local function fold_longcomment(text, pos, line, s, symbol)
