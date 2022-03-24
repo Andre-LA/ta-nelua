@@ -113,7 +113,8 @@ lex:add_rule('whitespace', token(lexer.WHITESPACE, ws1))
 lex:add_rule('keyword', keywords)
 
 -- TODO: this one doesn't works on something like `foo: #|'Bar'|#.Baz`
-local type_tk = (token(lexer.IDENTIFIER, lexer.word) * '.')^0 * token(lexer.TYPE, lexer.word)
+local ptr_ref_tk = token(lexer.OPERATOR, P'*')
+local type_tk = (ptr_ref_tk * ws0)^0 * (token(lexer.IDENTIFIER, lexer.word) * '.')^0 * token(lexer.TYPE, lexer.word)
 
 lex:add_rule('type',
   token(lexer.OPERATOR, P'@') * ws0 * type_tk
