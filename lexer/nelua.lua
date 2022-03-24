@@ -180,11 +180,19 @@ lex:add_rule('keyword', keywords)
 lex:add_rule('type',
   token(lexer.OPERATOR, P'@') * ws0 * token(lexer.TYPE, lexer.word)
   +
-  token(lexer.OPERATOR, P':') * ws1 * token(lexer.TYPE, lexer.word)
-  +
-  token(lexer.OPERATOR, P':') * token(lexer.TYPE, lexer.word) * #(P' '^0 * (lexer.newline + '='))
-  +
-  token(lexer.OPERATOR, P':') * token(lexer.TYPE, lexer.word) * #(P' '^0 * (function_call * (ws0 * '=')) )
+  (
+    token(lexer.OPERATOR, P':')
+    *
+    (
+      ws1 * token(lexer.TYPE, lexer.word)
+      +
+      (
+        token(lexer.TYPE, lexer.word) * #(P' '^0)
+        *
+        #( (lexer.newline + '=') + (function_call * (ws0 * '=')) )
+      )
+    )
+  )
 )
 
 lex:add_rule('function', function_tk)
