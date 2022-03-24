@@ -198,10 +198,10 @@ lex:add_rule('type',
 lex:add_rule('function', function_tk)
 
 lex:add_rule('library', libraries)
+lex:add_style('library', lexer.STYLE_TYPE)
 
 lex:add_rule('constant', token(lexer.CONSTANT, P'_VERSION'))
 
-lex:add_style('library', lexer.STYLE_TYPE)
 
 lex:add_rule('identifier', token(lexer.IDENTIFIER, lexer.word))
 
