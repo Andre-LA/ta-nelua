@@ -95,10 +95,11 @@ local preprocessor_end  = token('preprocessor_token', P'|#' + "]#" +   (P']' * P
 local pp_repl_macro_syntax_sugar  = token('preprocessor_token', P'!' * #(P'('))
 
 -- functions
-local balanced_parens = lexer.range('(', ')', false, false, true)
-local balanced_braces = lexer.range('{', '}', false, false, true)
+local balanced_parens = token(lexer.OPERATOR, lexer.range('(', ')', false, false, true))
+local balanced_braces = token(lexer.OPERATOR, lexer.range('{', '}', false, false, true))
+local balanced_pp_expr_repl = token(lexer.PREPROCESSOR, lexer.range('#[', ']#', false, false, true))
 
-local function_call = (P'!'^-1 * balanced_parens) + string_tk + balanced_braces
+local function_call = (P'!'^-1 * balanced_parens) + string_tk + balanced_braces + balanced_pp_expr_repl
 local function_tk = token(lexer.FUNCTION, lexer.word) * #(ws0 * function_call)
 
 -- rules
