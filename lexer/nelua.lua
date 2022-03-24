@@ -176,7 +176,7 @@ lex:add_fold_point(lexer.OPERATOR, '{', '}')
 
 -- embed lua
 local lua = lexer.load('lua')
-lex:embed(lua, preprocessor_start, preprocessor_end)
 lex:embed(lua, preprocessor_line, lexer.newline)
+lex:embed(lua, preprocessor_start, preprocessor_end)
 
 return lex
