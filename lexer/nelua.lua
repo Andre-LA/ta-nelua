@@ -182,9 +182,10 @@ lex:add_fold_point(lexer.OPERATOR, '(', ')')
 lex:add_fold_point(lexer.OPERATOR, '[', ']')
 lex:add_fold_point(lexer.OPERATOR, '{', '}')
 
+lex:add_style('preprocessor_token', lexer.styles.embedded)
+
 -- embed lua
 local lua = lexer.load('lua')
-lex:embed(lua, preprocessor_line, lexer.newline)
 lex:embed(lua, preprocessor_start, preprocessor_end)
 
 return lex
