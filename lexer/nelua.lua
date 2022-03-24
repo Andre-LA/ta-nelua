@@ -101,6 +101,11 @@ local balanced_pp_expr_repl = token(lexer.PREPROCESSOR, lexer.range('#[', ']#', 
 
 local function_call = (P'!'^-1 * balanced_parens) + string_tk + balanced_braces + balanced_pp_expr_repl
 local function_tk = token(lexer.FUNCTION, lexer.word) * #(ws0 * function_call)
+local consumed_function_tk = token(lexer.FUNCTION, lexer.word) * (ws0 * function_call)
+
+-- annotations
+local annot_id = consumed_function_tk + token('annotation', lexer.word)
+local annot_content = annot_id * (ws0 * ',' * ws0 * annot_id)^0
 
 -- rules
 
@@ -142,9 +147,9 @@ lex:add_rule('label', token(lexer.LABEL, '::' * lexer.word * '::'))
 
 lex:add_rule('preprocessor', preprocessor_line + preprocessor_start + preprocessor_end + pp_repl_macro_syntax_sugar)
 
-lex:add_rule('annotation', token(lexer.PREPROCESSOR, P'<' * -lexer.space * (lexer.nonnewline - P' >' - P'>')^1 * '>'))
-
+lex:add_rule('annotation', token(lexer.PREPROCESSOR, P'<') * #(-lexer.space) * annot_content * token(lexer.PREPROCESSOR, P'>'))
 lex:add_style('annotation', lexer.styles.class)
+
 lex:add_rule('operator', token(lexer.OPERATOR, '..' + S('+-*/%^#=<>&|~;,.:{}[]()$')))
 lex:add_style('preprocessor_token', lexer.STYLE_PREPROCESSOR .. {bold = true})
 
