@@ -203,7 +203,7 @@ lex:add_style('library', lexer.STYLE_TYPE)
 lex:add_rule('constant', token(lexer.CONSTANT, P'_VERSION'))
 
 
-lex:add_rule('identifier', token(lexer.IDENTIFIER, lexer.word))
+lex:add_rule('identifier', token(lexer.VARIABLE, P'self') + token(lexer.IDENTIFIER, lexer.word))
 
 lex:add_rule('string', string_tk)
 lex:add_style('longstring', lexer.STYLE_STRING)
