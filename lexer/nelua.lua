@@ -28,82 +28,11 @@ local keywords = token(lexer.KEYWORD, word_match{
 -- Constants
 
 -- Nelua libraries, from libraries page: https://nelua.io/libraries/
-local libraries = token('library', word_match{
-  -- io
-  'io.stderr', 'io.stdout', 'io.stdin', 'io.open', 'io.popen', 'io.close', 'io.flush', 'io.input', 'io.output',
-  'io.tmpfile', 'io.read', 'io.write', 'io.writef', 'io.printf', 'io.type', 'io.lines',
-
-  -- filestream
-  'filestream._fromfp', 'filestream._getfp', 'filestream.open', 'filestream.flush', 'filestream.close', 'filestream.destroy',
-  'filestream.__close', 'filestream.seek', 'filestream.setvbuf', 'filestream.read', 'filestream.write', 'filestream.writef',
-  'filestream.lines', 'filestream.isopen', 'filestream.__tostring',
-
-  -- math
-  'math.abs', 'math.floor', 'math.ifloor', 'math.ceil', 'math.iceil', 'math.round', 'math.trunc', 'math.sqrt', 'math.cbrt',
-  'math.exp', 'math.exp2', 'math.pow', 'math.log', 'math.cos', 'math.sin', 'math.tan', 'math.acos', 'math.asin', 'math.atan',
-  'math.atan2', 'math.cosh', 'math.sinh', 'math.tanh', 'math.log10', 'math.log2', 'math.acosh', 'math.asinh', 'math.atanh',
-  'math.deg', 'math.rad', 'math.sign', 'math.fract', 'math.mod', 'math.modf', 'math.fmod', 'math.frexp', 'math.ldexp', 'math.min',
-  'math.max', 'math.clamp', 'math.ult', 'math.tointeger', 'math.type', 'math.randomseed', 'math.random', 'math.pi', 'math.huge',
-  'math.mininteger', 'math.maxinteger', 'math.maxuinteger',
-
-  -- memory
-  'memory.copy', 'memory.move', 'memory.set', 'memory.zero', 'memory.compare', 'memory.equals', 'memory.scan', 'memory.find',
-  'memory.spancopy', 'memory.spanmove', 'memory.spanset', 'memory.spanzero', 'memory.spancompare', 'memory.spanequals', 'memory.spanfind',
-
-  -- os
-  'os.clock', 'os.date', 'os.difftime', 'os.execute', 'os.exit', 'os.setenv', 'os.getenv', 'os.remove', 'os.rename',
-  'os.setlocale', 'os.timedesc', 'os.time', 'os.tmpname', 'os.now', 'os.sleep',
-
-  -- string
-  'string.create', 'string.destroy', 'string.copy', 'string.byte', 'string.sub', 'string.subview', 'string.rep',
-  'string.reverse', 'string.upper', 'string.lower', 'string.char', 'string.format', 'string.len', 'string.fillcstring',
-  'string.span', 'string.__close', 'string.__atindex', 'string.__len', 'string.__concat', 'string.__eq', 'string.__lt',
-  'string.__le', 'string.__add', 'string.__sub', 'string.__mul', 'string.__div', 'string.__idiv', 'string.__tdiv', 'string.__mod',
-  'string.__tmod', 'string.__pow', 'string.__unm', 'string.__band', 'string.__bor', 'string.__bxor', 'string.__shl', 'string.__shr',
-  'string.__asr', 'string.__bnot', 'string.find', 'string.gmatch', 'string.gmatchview', 'string.gsub', 'string.match',
-  'string.matchview', 'string.pack', 'string.unpack', 'string.packsize',
-
-  -- stringbuilder
-  'stringbuilder.make', 'stringbuilder.destroy', 'stringbuilder.__close', 'stringbuilder.clear', 'stringbuilder.prepare',
-  'stringbuilder.commit', 'stringbuilder.rollback', 'stringbuilder.resize', 'stringbuilder.writebyte', 'stringbuilder.write',
-  'stringbuilder.writef', 'stringbuilder.view', 'stringbuilder.promote', 'stringbuilder.__len', 'stringbuilder.__tostring',
-
-  -- traits
-  'traits.typeid', 'traits.typeinfo', 'traits.typeidof', 'traits.typeinfoof',
-
-  -- utf8
-  'utf8.charpattern', 'utf8.char', 'utf8.codes', 'utf8.codepoint', 'utf8.offset', 'utf8.len',
-
-  -- coroutine
-  'coroutine.destroy', 'coroutine.__close', 'coroutine.create', 'coroutine.push', 'coroutine.pop', 'coroutine.isyieldable',
-  'coroutine.resume', 'coroutine.spawn', 'coroutine.yield', 'coroutine.running', 'coroutine.status',
-
-  -- hash
-  'hash.short', 'hash.long', 'hash.combine', 'hash.hash',
-
-  -- vector
-  'vectorT.make', 'vectorT.clear', 'vectorT.destroy', 'vectorT.__close', 'vectorT.reserve', 'vectorT.resize', 'vectorT.copy',
-  'vectorT.push', 'vectorT.pop', 'vectorT.insert', 'vectorT.remove', 'vectorT.removevalue', 'vectorT.removeif', 'vectorT.capacity',
-  'vectorT.__atindex', 'vectorT.__len', 'vectorT.__convert',
-
-  -- sequence
-  'sequence._init', 'sequence.make', 'sequence.clear', 'sequence.destroy', 'sequence.__close', 'sequence.reserve', 'sequence.resize',
-  'sequence.copy', 'sequence.push', 'sequence.pop', 'sequence.insert', 'sequence.remove', 'sequence.removevalue', 'sequence.removeif',
-  'sequence.capacity', 'sequence.__atindex', 'sequence.__len', 'sequence.__convert', 'sequence.unpack',
-
-  -- list
-  'list.make', 'list.clear', 'list.destroy', 'list.__close', 'list.pushfront', 'list.pushback', 'list.insert', 'list.popfront',
-  'list.popback', 'list.find', 'list.erase', 'list.empty', 'list.__len', 'list.__next', 'list.__mnext', 'list.__pairs', 'list.__mpairs',
-  'list.__convert',
-
-  -- hashmap
-  'hashmap.make', 'hashmap.destroy', 'hashmap.__close', 'hashmap.clear', 'hashmap._find', 'hashmap.rehash', 'hashmap.reserve',
-  'hashmap._at', 'hashmap.__atindex', 'hashmap.peek', 'hashmap.remove', 'hashmap.loadfactor', 'hashmap.bucketcount', 'hashmap.capacity',
-  'hashmap.__len', 'hashmap.__pairs', 'hashmap.__mpairs', 'hashmap._next_node', 'hashmap.__next', 'hashmap.__mnext',
-
-  -- TODO: Allocators
+local libraries = token(lexer.CLASS, word_match{
+  'io', 'filestream', 'math', 'memory', 'os', 'string', 'stringbuilder',
+  'traits', 'utf8', 'coroutine', 'hash', 'vector', 'sequence', 'list', 'hashmap'
+  -- TODO: add allocators
 })
-
 
 -- Strings.
 local longstring = lpeg.Cmt(
