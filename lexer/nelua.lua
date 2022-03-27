@@ -44,7 +44,7 @@ local longstring = lpeg.Cmt(
 )
 
 local string_patt = lexer.range("'") + lexer.range('"')
-local string_tk = token(lexer.STRING, string_patt + token('longstring', longstring))
+local string_tk = token(lexer.STRING, string_patt + longstring)
 
 -- Numbers.
 local nelua_suffixes = word_match{
