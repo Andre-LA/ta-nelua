@@ -86,7 +86,8 @@ local nelua_suffixes = word_match{
   '_cstring',
 }
 
-local integer = P('-')^-1 * (lexer.hex_num + lexer.dec_num)
+local bin_num = '0b' * S('01')^1
+local integer = P('-')^-1 * (lexer.hex_num + bin_num + lexer.dec_num)
 
 -- preprocessor
 local preprocessor_line = token('preprocessor_token', P'##')
@@ -154,8 +155,6 @@ lex:add_style('annotation', lexer.styles.class)
 lex:add_rule('operator', token(lexer.OPERATOR, '..' + S('+-*/%^#=<>&|~;,.:{}[]()$')))
 
 lex:add_style('preprocessor_token', lexer.STYLE_PREPROCESSOR .. {bold = true})
-
-lex:add_rule('error', token(lexer.ERROR, lexer.any))
 
 -- Fold points.
 local function fold_longcomment(text, pos, line, s, symbol)
